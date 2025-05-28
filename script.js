@@ -34,11 +34,11 @@ let numStack = [];
 let opStack = [];
 let acceptDecimal = true;
 
-const screen = document.querySelector("#calc-screen");
+const screen = document.querySelector(".calc-screen");
 const btns = document.querySelectorAll(".btn");
 btns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
-        screen.setAttribute("style", "font-size:44px; padding:0px 24px;transition:250ms; transition-timing-function: ease-out;");
+        screen.classList.remove("error-screen");
         if (e.target.textContent == "AC") {
             screen.textContent = 0;
         }
@@ -107,10 +107,10 @@ btns.forEach((btn) => {
                 screen.textContent = numStack.reduce((answer, n) => operate(answer, n, opStack.shift()));
                 if (screen.textContent == "Infinity" || screen.textContent == "NaN") {
                     screen.textContent = "pls watch/read One Piece 🏴‍☠️";
-                    screen.setAttribute("style", "font-size:24px; padding:0px; height:auto; padding-left:12px;width:436.6px;text-align:right;transition:250ms; transition-timing-function: ease-in-out;");
+                    screen.classList.add("error-screen");
                     const img = document.createElement("img");
                     img.src = "chopper-cropped.webp";   // https://www.pngall.com/tony-tony-chopper-png/download/142360/
-                    img.setAttribute("style", "height:140px; width:auto;margin-left:8px;opacity:80%")
+                    img.setAttribute("id", "op-img");
                     screen.append(img);
                     console.log(screen.textContent);
                 }
