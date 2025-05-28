@@ -1,0 +1,120 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+body {
+    background-color: rgb(34, 34, 34);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items:center;
+}
+
+* {
+    font-family: "Montserrat";
+}
+
+#btns-container {
+    display:flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.fk {
+    display:flex;
+}
+
+#calc-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: rgb(255, 255, 255);
+    width:fit-content;
+    padding:24px;
+    border-radius: 20px;
+    box-shadow: 2px 2px 240px rgb(54, 61, 79);
+}
+
+#calc-screen {
+    background-color: grey;
+    width:250px;
+    height:80px;
+    width:420px;
+    border-radius: 12px;
+}
+
+#btn-container {
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+}
+
+.btn {
+    background-color: white;
+    width:88px;
+    height: 88px;
+    font-size: 28px;
+    font-weight: 200;
+    cursor:pointer;
+    border-radius: 8px;
+    border: 0px solid black;
+    margin:12px;
+}
+.btn:hover {
+    transition: 200ms;
+    background-color: rgb(242, 247, 255);
+    color:rgb(82, 82, 82)
+}
+
+.btn:active {
+    transition:200ms;
+    background-color: rgb(176, 206, 255);
+}
+#equal:hover {
+    background-color: rgb(255, 239, 210);
+}
+#equal:active {
+    background-color: rgb(255, 214, 138);
+    font-weight: 600;
+}
+
+.remover:hover {
+    background-color: rgb(255, 226, 226);
+}
+.remover:active {
+    background-color: rgb(255, 195, 195);
+}
+
+#btn2-container > :nth-child(1) {
+    width: fit-content;
+    padding: 0px 16px;
+}
+#btn2-container > :nth-child(2) {
+    color:rgb(131, 59, 59);
+    letter-spacing: 2px;
+    font-weight: 600;
+}
+#btn2-container {
+    display:flex;
+    justify-content: flex-end;
+}
+
+#calc-screen {
+    margin:12px 0px;
+    display:flex;
+    justify-content: flex-end;
+    align-items: center;
+    font-weight: 600;
+    font-size: 44px;
+    padding:0px 24px;
+    background-color: rgb(177, 199, 178);
+    color:rgb(73, 99, 74);
+    width:400.6px;
+    box-shadow: 1px 1px 8px rgb(170, 170, 170);
+    overflow:hidden;
+    text-wrap: nowrap;
+}
+
+h1 {
+    color:white;
+    font-weight: 200;
+    letter-spacing: 4px;
+    margin-bottom: 36px;
+}
