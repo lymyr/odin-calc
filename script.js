@@ -1,14 +1,14 @@
+let nth = 1000;
 function add(a, b) {
-    return parseFloat(a)+parseFloat(b)
+    return (Math.round((parseFloat(a)+parseFloat(b))*nth))/nth
 }
 function subtract(a, b) {
-    return parseFloat(a)-parseFloat(b)
+    return (Math.round((parseFloat(a)-parseFloat(b))*nth))/nth
 }
 function multiply(a, b) {
-    return parseFloat(a)*parseFloat(b)
+    return (Math.round((parseFloat(a)*parseFloat(b))*nth))/nth
 }
 function divide(a, b) {
-    let nth = 1000
     return (Math.round((parseFloat(a)/parseFloat(b))*nth))/nth
 }
 function operate(a, b, op) {
@@ -32,7 +32,7 @@ function isOperator(n) {
 
 let numStack = [];
 let opStack = [];
-let acceptDecimal = true;
+let newOp = false;
 
 const screen = document.querySelector(".calc-screen");
 const btns = document.querySelectorAll(".btn");
@@ -51,6 +51,17 @@ btns.forEach((btn) => {
                 
             }
         }
+        else if (newOp) {
+            if (e.target.textContent == "." && !(getPrevChar().toString().split("").includes("."))) {
+                screen.textContent += e.target.textContent;
+            }
+            else if (!(isOperator(e.target.textContent)) && e.target.textContent != ".") {
+                screen.textContent = e.target.textContent;
+            }
+            else if (e.target.textContent != ".")
+                screen.textContent += ` ${e.target.textContent}`;
+            newOp = false;
+        }
         else if (e.target.textContent != "AC" && e.target.textContent != "=") {
             if (screen.textContent == "pls watch/read One Piece 🏴‍☠️") {
                 if (isOperator(e.target.textContent))
@@ -61,29 +72,24 @@ btns.forEach((btn) => {
             else if (screen.textContent == "0") {
                 if (e.target.textContent == ".") {
                     screen.textContent += e.target.textContent;
-                    acceptDecimal = false;
                 }
                 else if (!(isOperator(e.target.textContent))){
                         screen.textContent = e.target.textContent;
-                        acceptDecimal = true;
                     }
                 else {
                     screen.textContent += ` ${e.target.textContent} `;
                 }
             }
             else if (screen.textContent != "0"){
-                console.log(acceptDecimal);
-                if (e.target.textContent == "." && acceptDecimal) {
+                if (e.target.textContent == "." && !(getPrevChar().toString().split("").includes("."))) {
                     if (isOperator(getPrevChar()))
-                        screen.textContent += `0${e.target.textContent}`
+                        screen.textContent += ` 0${e.target.textContent}`
                     else
                         screen.textContent += e.target.textContent;
-                    acceptDecimal = false;
                 }
                 else if (isOperator(e.target.textContent)) {
                     if (!isOperator(getPrevChar())) {
                         screen.textContent += ` ${e.target.textContent}`;
-                        acceptDecimal = true;
                     }
                 }
                 else if (e.target.textContent != "." && !(isOperator(e.target.textContent))) {
@@ -95,8 +101,8 @@ btns.forEach((btn) => {
         }
         else if (e.target.textContent == "=") {
             let userInput = screen.textContent.split(" ");
+            newOp = true;
             if (!(isOperator(userInput[userInput.length-1]))) {
-                console.log("Initiated...");
                 for (let i = 0; i < userInput.length; i++) {
                     if (isOperator(userInput[i]))
                         opStack.push(userInput[i]);
@@ -105,7 +111,7 @@ btns.forEach((btn) => {
                 }
                 
                 screen.textContent = numStack.reduce((answer, n) => operate(answer, n, opStack.shift()));
-                if (screen.textContent == "Infinity" || screen.textContent == "NaN") {
+                if (screen.textContent == "Infinity" || screen.textContent == "-Infinity" || screen.textContent == "NaN") {
                     screen.textContent = "pls watch/read One Piece 🏴‍☠️";
                     screen.classList.add("error-screen");
                     const img = document.createElement("img");
