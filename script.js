@@ -23,11 +23,14 @@ function operate(a, b, op) {
             return divide(a, b)
     }
 }
-function getPrevChar() {
-    return screen.textContent.split(" ").slice(-1)
-}
 function isOperator(n) {
     return n == "x" || n == "+" || n == "÷" || n == "-"
+}
+function getPrev() {
+    return screen.textContent.split(" ").slice(-1).toString()
+}
+function getPrevTwo() {
+    return screen.textContent.split("").slice(-2)
 }
 
 let numStack = [];
@@ -38,92 +41,83 @@ const screen = document.querySelector(".calc-screen");
 const btns = document.querySelectorAll(".btn");
 btns.forEach((btn) => {
     btn.addEventListener("click", (e) => {
-        screen.classList.remove("error-screen");
-        if (e.target.textContent == "AC") {
-            screen.textContent = 0;
-        }
-        else if (e.target.textContent == "Backspace") {
-            if (screen.textContent.length == 1 || screen.textContent == "pls watch/read One Piece 🏴‍☠️") {
+        switch (e.target.textContent) {
+            case "AC":
+                screen.classList.remove("error-screen");
                 screen.textContent = 0;
-            }
-            else {
-                screen.textContent = screen.textContent.split("").slice(0, screen.textContent.length-1).join("");
-                
-            }
-        }
-        else if (newOp) {
-            if (e.target.textContent == "." && !(getPrevChar().toString().split("").includes("."))) {
-                screen.textContent += e.target.textContent;
-            }
-            else if (!(isOperator(e.target.textContent)) && e.target.textContent != ".") {
-                screen.textContent = e.target.textContent;
-            }
-            else if (e.target.textContent != ".")
-                screen.textContent += ` ${e.target.textContent}`;
-            newOp = false;
-        }
-        else if (e.target.textContent != "AC" && e.target.textContent != "=") {
-            if (screen.textContent == "pls watch/read One Piece 🏴‍☠️") {
-                if (isOperator(e.target.textContent))
-                    screen.textContent = 0
+                newOp = false;
+                break;
+            case "Backspace":
+                screen.classList.remove("error-screen");
+                newOp = false;
+                if (screen.textContent.length == 1 || screen.textContent == "pls watch/read One Piece 🏴‍☠️")
+                    screen.textContent = 0;
+                else if (getPrevTwo().includes(" "))
+                    screen.textContent = screen.textContent.split("").slice(0, screen.textContent.length-2).join("")
                 else
+                    screen.textContent = screen.textContent.split("").slice(0, screen.textContent.length-1).join("");
+                break;
+            case "x":
+            case "÷":
+            case "-":   // could change to allow user to input negative numbers
+            case "+":
+                if (!isOperator(getPrev()) && screen.textContent != "pls watch/read One Piece 🏴‍☠️") {
+                    screen.textContent += ` ${e.target.textContent}`;
+                    newOp = false;
+                    screen.classList.remove("error-screen");
+                }
+                break;
+            case ".":
+                if (screen.textContent != "pls watch/read One Piece 🏴‍☠️") {
+                    if (isOperator(getPrev())) {
+                        if (screen.textContent == "-")
+                            screen.textContent += "0.";
+                        else
+                            screen.textContent += " 0.";
+                    }
+                    else if (!(getPrev().split("").includes(".")))
+                        screen.textContent += ".";
+                    newOp = false;
+                    screen.classList.remove("error-screen");
+                }
+                break;
+            case "=":
+                let userInput = screen.textContent.split(" ");
+                if (!(isOperator(userInput[userInput.length-1])) && screen.textContent != "pls watch/read One Piece 🏴‍☠️") {
+                    for (let i = 0; i < userInput.length; i++) {
+                        if (isOperator(userInput[i]))
+                            opStack.push(userInput[i]);
+                        else 
+                            numStack.push(userInput[i]);
+                    }
+                    
+                    screen.textContent = numStack.reduce((answer, n) => operate(answer, n, opStack.shift()));
+                    if (screen.textContent == "Infinity" || screen.textContent == "-Infinity" || screen.textContent == "NaN") {
+                        screen.textContent = "pls watch/read One Piece 🏴‍☠️";
+                        screen.classList.add("error-screen");
+                        const img = document.createElement("img");
+                        img.src = "chopper-cropped.webp";   // https://www.pngall.com/tony-tony-chopper-png/download/142360/
+                        img.setAttribute("id", "op-img");
+                        screen.append(img);
+                        console.log(screen.textContent);
+                    }
+                    numStack = [];
+                    opStack = [];
+                    userInput = [];
+                    newOp = true;
+                }
+                break;
+            default:
+                screen.classList.remove("error-screen");
+                if (screen.textContent == "0." || screen.textContent == "-0.")
+                    screen.textContent += e.target.textContent;
+                else if (screen.textContent == 0 || newOp)
                     screen.textContent = e.target.textContent;
-            }
-            else if (screen.textContent == "0") {
-                if (e.target.textContent == ".") {
+                else if (isOperator(getPrev()) && !isNaN(screen.textContent.split(" ").slice(-2)[0]))
+                    screen.textContent += ` ${e.target.textContent}`;
+                else
                     screen.textContent += e.target.textContent;
-                }
-                else if (!(isOperator(e.target.textContent))){
-                        screen.textContent = e.target.textContent;
-                    }
-                else {
-                    screen.textContent += ` ${e.target.textContent} `;
-                }
-            }
-            else if (screen.textContent != "0"){
-                if (e.target.textContent == "." && !(getPrevChar().toString().split("").includes("."))) {
-                    if (isOperator(getPrevChar()))
-                        screen.textContent += ` 0${e.target.textContent}`
-                    else
-                        screen.textContent += e.target.textContent;
-                }
-                else if (isOperator(e.target.textContent)) {
-                    if (!isOperator(getPrevChar())) {
-                        screen.textContent += ` ${e.target.textContent}`;
-                    }
-                }
-                else if (e.target.textContent != "." && !(isOperator(e.target.textContent))) {
-                    if (isOperator(getPrevChar()))
-                        screen.textContent += " ";
-                    screen.textContent += e.target.textContent;
-                }
-            }
-        }
-        else if (e.target.textContent == "=") {
-            let userInput = screen.textContent.split(" ");
-            newOp = true;
-            if (!(isOperator(userInput[userInput.length-1]))) {
-                for (let i = 0; i < userInput.length; i++) {
-                    if (isOperator(userInput[i]))
-                        opStack.push(userInput[i]);
-                    else 
-                        numStack.push(userInput[i]);
-                }
-                
-                screen.textContent = numStack.reduce((answer, n) => operate(answer, n, opStack.shift()));
-                if (screen.textContent == "Infinity" || screen.textContent == "-Infinity" || screen.textContent == "NaN") {
-                    screen.textContent = "pls watch/read One Piece 🏴‍☠️";
-                    screen.classList.add("error-screen");
-                    const img = document.createElement("img");
-                    img.src = "chopper-cropped.webp";   // https://www.pngall.com/tony-tony-chopper-png/download/142360/
-                    img.setAttribute("id", "op-img");
-                    screen.append(img);
-                    console.log(screen.textContent);
-                }
-                numStack = [];
-                opStack = [];
-                userInput = [];
-            }
+                newOp = false;
         }
     })
 })
