@@ -37,6 +37,18 @@ function getPrevTwo() {
 function getArr() {
     return screen.textContent.split(" ");
 }
+function runOperation() {
+    screen.textContent = operate(arr[0], arr[2], arr[1]);
+    if (screen.textContent == "Infinity" || screen.textContent == "-Infinity" || screen.textContent == "NaN") {
+        screen.textContent = "pls watch/read One Piece 🏴‍☠️";
+        screen.classList.add("error-screen");
+        const img = document.createElement("img");
+        img.src = "chopper-cropped.webp";   // https://www.pngall.com/tony-tony-chopper-png/download/142360/
+        img.setAttribute("id", "op-img");
+        screen.append(img);
+        alert("Error: Division by zero is undefined.");
+    }
+}
 let arr = [];
 const screen = document.querySelector(".calc-screen");
 const btns = document.querySelectorAll(".btn");
@@ -71,8 +83,9 @@ btns.forEach((btn) => {
                     screen.textContent = arr.join(" ");
                 }
                 else if (arr.length == 3) {
-                    screen.textContent = operate(arr[0], arr[2], arr[1]);
-                    screen.textContent += ` ${e.target.textContent}`;
+                    runOperation();
+                    if (screen.textContent != "pls watch/read One Piece 🏴‍☠️")
+                        screen.textContent += ` ${e.target.textContent}`;
                 }
                 else 
                     screen.textContent += ` ${e.target.textContent}`;
@@ -84,18 +97,8 @@ btns.forEach((btn) => {
                     screen.textContent += ".";
                 break;
             case "=":
-                if (!(isOperator(screen.textContent)) && screen.textContent != "pls watch/read One Piece 🏴‍☠️") {
-                    screen.textContent = operate(arr[0], arr[2], arr[1]);
-
-                    if (screen.textContent == "Infinity" || screen.textContent == "-Infinity" || screen.textContent == "NaN") {
-                        screen.textContent = "pls watch/read One Piece 🏴‍☠️";
-                        screen.classList.add("error-screen");
-                        const img = document.createElement("img");
-                        img.src = "chopper-cropped.webp";   // https://www.pngall.com/tony-tony-chopper-png/download/142360/
-                        img.setAttribute("id", "op-img");
-                        screen.append(img);
-                        console.log(screen.textContent);
-                    }
+                if (!(isOperator(screen.textContent)) && screen.textContent != "pls watch/read One Piece 🏴‍☠️" && arr.length == 3) {
+                    runOperation();
                 }
                 break;
             default:
