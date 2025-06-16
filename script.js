@@ -1,4 +1,5 @@
 let nth = 1000;
+let justOperated = false;
 function add(a, b) {
     return (Math.round((parseFloat(a)+parseFloat(b))*nth))/nth
 }
@@ -62,9 +63,10 @@ btns.forEach((btn) => {
         switch (e.target.textContent) {
             case "AC":
                 screen.textContent = 0;
+                justOperated = false;
                 break;
             case "Backspace":
-                if (screen.textContent.length == 1)
+                if (screen.textContent.length == 1 || justOperated)
                     screen.textContent = 0;
                 else if (getPrevTwo().includes("-") && arr.length == 1) {
                     screen.textContent = 0;
@@ -73,11 +75,13 @@ btns.forEach((btn) => {
                     screen.textContent = screen.textContent.split("").slice(0, screen.textContent.length-2).join("")
                 else
                     screen.textContent = screen.textContent.split("").slice(0, screen.textContent.length-1).join("");
+                justOperated = false;
                 break;
             case "x":
             case "÷":
             case "-":
             case "+":
+                justOperated = false;
                 if (isOperator(arr[arr.length - 1])) {
                     arr[arr.length - 1] = e.target.textContent;
                     screen.textContent = arr.join(" ");
@@ -91,19 +95,25 @@ btns.forEach((btn) => {
                     screen.textContent += ` ${e.target.textContent}`;
                 break;
             case ".":
-                if (isOperator(getPrev()))
+                if (justOperated)
+                    screen.textContent = "0.";
+                else if (isOperator(getPrev()))
                     screen.textContent += " 0.";
                 else if (!(screen.textContent.split("").includes(".")))
                     screen.textContent += ".";
+                justOperated = false;
                 break;
             case "=":
                 if (!(isOperator(screen.textContent)) && screen.textContent != "pls watch/read One Piece 🏴‍☠️" && arr.length == 3) {
                     runOperation();
+                    justOperated = true;
                 }
                 break;
             default:
-                if (screen.textContent == "0")
+                if (screen.textContent == "0" || justOperated) {
                     screen.textContent = e.target.textContent;
+                    justOperated = false;
+                }
                 else if (isOperator(arr[arr.length - 1])) {
                     screen.textContent += ` ${e.target.textContent}`;
                 }
